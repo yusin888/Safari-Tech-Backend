@@ -107,6 +107,31 @@ app.get('/investor-analysis', async (req, res) => {
 });
 
 
+app.get('/alumni', async (req, res) => {
+    try {
+        const db = getDb();
+        const startups = await db.collection('internship').find({}).toArray();
+        res.json(startups);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.get('/alumni/:name', async (req, res) => {
+    try {
+        const db = getDb();
+        const name = req.params.name;
+        const startup = await db.collection('internship').findOne({ Name: name });
+        if (startup) {
+            res.json(startup);
+        } else {
+            res.status(404).json({ message: 'Alumni not found' });
+    }
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 connectToDatabase().then(() => {
     app.listen(port, () => {
         console.log(`Server is running on port ${port}`);
